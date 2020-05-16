@@ -1,17 +1,19 @@
 # panda3D
 
-Learning Panda3D
+Learning [Panda3D](https://docs.panda3d.org/1.10/python/index)
+
+---
 
 ## Packages
 
-panda3d==1.10.6
-imagesize
+* panda3d==1.10.6
+* imagesize
 
 ---
 
 ## Procedure
  
-1. Convert Maya .mb files to .egg files (**all the files are put in the folder ./model**) using [./convert.py](./convert.py) (*only works in windows*)
+1. Convert Maya .mb files to .egg files (**all the files should be put in the folder ./model**) using [./convert.py](./convert.py) (*only works in windows*)
 
 2. Generate screenshot from top view with a pointlight when applying a certain texture to a Model
 

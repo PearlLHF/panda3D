@@ -15,7 +15,9 @@ class Model(ShowBase):
 
     def __init__(self, modelName="Paper.egg", textureName="0.jpg", screenshotName=""):
         ShowBase.__init__(self)
+        self.loadModel(modelName, textureName, screenshotName)
 
+    def loadModel(self, modelName="Paper.egg", textureName="0.jpg", screenshotName=""):
         self.modelName = modelName
         path_to_model = "model/" + self.modelName
 
@@ -29,6 +31,7 @@ class Model(ShowBase):
 
         # Apply texture
         self.applyTexture(path_to_img, screenshotName)
+        return self
 
     def setScreenshotName(self, fileName):
         if fileName != "":
@@ -36,6 +39,7 @@ class Model(ShowBase):
                 self.modelName + "-screenshot-" + fileName + ".jpg"
 
     # different lightings
+
     def addPointLight(self, color=(0.2, 0.2, 0.2, 1), pos=(0, 0, 100)):
         plight = PointLight('plight')
         plight.setColor(color)
@@ -65,14 +69,14 @@ class Model(ShowBase):
         self.addPointLight(pos=(0, 0, (self.hei+self.wid)/self.wid*666))
         # self.addDirectionalLight(pos=(0, 0, (self.hei+self.wid)/self.wid*66))
 
-        #take screenshot
+        # take screenshot
         if self.screenshotName != "":
             self.screenshot(self.screenshotName, defaultFilename=False)
 
         return Task.cont
 
     # applying textures
-    def applyTexture(self, path_to_img, screenshotName = ""):
+    def applyTexture(self, path_to_img, screenshotName=""):
         self.wid, self.hei = imagesize.get(path_to_img)
         myTexture = self.loader.loadTexture(path_to_img)
         self.scene.setTexture(myTexture, 1)
