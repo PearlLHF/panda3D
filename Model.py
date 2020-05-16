@@ -22,15 +22,13 @@ class Model(ShowBase):
         self.textureName = textureName
         path_to_img = "texture/" + textureName
 
-        self.setScreenshotName(screenshotName)
-
         # Load the environment model.
         self.scene = self.loader.load_model(path_to_model)
         # Reparent the model to render.
         self.scene.reparentTo(self.render)
 
         # Apply texture
-        self.applyTexture(path_to_img)
+        self.applyTexture(path_to_img, screenshotName)
 
     def setScreenshotName(self, fileName):
         if fileName != "":
@@ -38,10 +36,9 @@ class Model(ShowBase):
                 self.modelName + "-screenshot-" + fileName + ".jpg"
 
     # different lightings
-    def addPointLight(self, color=(0.2, 0.2, 0.2, 1), pos=(0, 0, 100), attenuation=(0, 0, 1)):
+    def addPointLight(self, color=(0.2, 0.2, 0.2, 1), pos=(0, 0, 100)):
         plight = PointLight('plight')
         plight.setColor(color)
-        plight.setAttenuation(attenuation)
         plnp = self.render.attachNewNode(plight)
         plnp.setPos(pos)
         self.render.setLight(plnp)
@@ -65,7 +62,7 @@ class Model(ShowBase):
     def cameraTaskInit(self, task):
         self.camera.setPos(0, 0, (self.hei+self.wid)/self.wid*666)
         self.camera.setHpr(0, -90, 0)
-        self.addPointLight(pos=(0, 0, (self.hei+self.wid)/self.wid*66))
+        self.addPointLight(pos=(0, 0, (self.hei+self.wid)/self.wid*666))
         # self.addDirectionalLight(pos=(0, 0, (self.hei+self.wid)/self.wid*66))
 
         #take screenshot
@@ -75,7 +72,7 @@ class Model(ShowBase):
         return Task.cont
 
     # applying textures
-    def applyTexture(self, path_to_img):
+    def applyTexture(self, path_to_img, screenshotName = ""):
         self.wid, self.hei = imagesize.get(path_to_img)
         myTexture = self.loader.loadTexture(path_to_img)
         self.scene.setTexture(myTexture, 1)
@@ -84,4 +81,5 @@ class Model(ShowBase):
         self.scene.setScale(1, self.hei/self.wid, 1)
         self.scene.setPos(0, 0, 0)
 
+        self.setScreenshotName(screenshotName)
         self.taskMgr.add(self.cameraTaskInit, "cameraTaskInit")
