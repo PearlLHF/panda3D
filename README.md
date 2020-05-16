@@ -20,15 +20,15 @@ imagesize
 ---
 
 ## TODO: 
-    - [ ] create more models using maya
-        - [x] fold
-        - [x] curl
-        - [x] roll
-        - [ ] combination of fold
-        - [ ] combination of curl
-        - [ ] combination of all
-        - [ ] random
-    - [x] applying textures
-    - [x] applying different lightings
-    - [x] applying different camera views
-    - [ ] more camera tasks with different viewing angles and different lightings
+- [ ] create more models using maya
+    - [x] fold
+    - [x] curl
+    - [x] roll
+    - [ ] combination of fold
+    - [ ] combination of curl
+    - [ ] combination of all
+    - [ ] random
+- [x] applying textures
+- [x] applying different lightings
+- [x] applying different camera views
+- [ ] more camera tasks with different viewing angles and different lightings
