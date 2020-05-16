@@ -1,6 +1,6 @@
 from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
-from panda3d.core import TextureStage, PointLight, Camera
+from panda3d.core import TextureStage, PointLight, DirectionalLight, AmbientLight, Spotlight
 
 import imagesize
 
@@ -37,17 +37,36 @@ class Model(ShowBase):
             self.screenshotName = "./screenshot/" + \
                 self.modelName + "-screenshot-" + fileName + ".jpg"
 
-    def addPointLight(self, color=(0.2, 0.2, 0.2, 1), pos=(0, 0, 100)):
+    # different lightings
+    def addPointLight(self, color=(0.2, 0.2, 0.2, 1), pos=(0, 0, 100), attenuation=(0, 0, 1)):
         plight = PointLight('plight')
         plight.setColor(color)
+        plight.setAttenuation(attenuation)
         plnp = self.render.attachNewNode(plight)
         plnp.setPos(pos)
         self.render.setLight(plnp)
 
-    def taskCameraWithPl(self, task):
+    def addDirectionalLight(self, color=(0.2, 0.2, 0.2, 1), pos=(0, 0, 100), hpr=(0, 0, 0)):
+        dlight = DirectionalLight('my dlight')
+        dlight.setColor(color)
+        dlnp = self.render.attachNewNode(dlight)
+        dlnp.setPos(pos)
+        dlnp.setHpr(hpr)
+        self.render.setLight(dlnp)
+
+    def addAmbientLight(self, color=(0.2, 0.2, 0.2, 1), pos=(0, 0, 100)):
+        alight = AmbientLight('alight')
+        alight.setColor(color)
+        alnp = self.render.attachNewNode(alight)
+        alnp.setPos(pos)
+        self.render.setLight(alnp)
+
+    # camera task when applying texture(top view)
+    def cameraTaskInit(self, task):
         self.camera.setPos(0, 0, (self.hei+self.wid)/self.wid*666)
         self.camera.setHpr(0, -90, 0)
         self.addPointLight(pos=(0, 0, (self.hei+self.wid)/self.wid*66))
+        # self.addDirectionalLight(pos=(0, 0, (self.hei+self.wid)/self.wid*66))
 
         #take screenshot
         if self.screenshotName != "":
@@ -55,6 +74,7 @@ class Model(ShowBase):
 
         return Task.cont
 
+    # applying textures
     def applyTexture(self, path_to_img):
         self.wid, self.hei = imagesize.get(path_to_img)
         myTexture = self.loader.loadTexture(path_to_img)
@@ -64,4 +84,4 @@ class Model(ShowBase):
         self.scene.setScale(1, self.hei/self.wid, 1)
         self.scene.setPos(0, 0, 0)
 
-        self.taskMgr.add(self.taskCameraWithPl, "taskCameraWithPl")
+        self.taskMgr.add(self.cameraTaskInit, "cameraTaskInit")
