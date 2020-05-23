@@ -3,9 +3,9 @@ from direct.task import Task
 from panda3d.core import TextureStage, PointLight, DirectionalLight, AmbientLight, Spotlight
 
 import imagesize
+from math import sin,cos
 
-
-class Model(ShowBase):
+class Model_syh(ShowBase):
 
     wid = 1.0
     hei = 1.0
@@ -15,8 +15,10 @@ class Model(ShowBase):
 
     def __init__(self, modelName="Paper.egg", textureName="0.jpg", screenshotName=""):
         ShowBase.__init__(self)
+        self.lightX = 0
         self.loadModel(modelName, textureName, screenshotName)
         self.addPointLight()
+        self.taskMgr.add(self.move_light,"move-light")
 
     def loadModel(self, modelName="Paper.egg", textureName="0.jpg", screenshotName=""):
         self.modelName = modelName
@@ -29,10 +31,18 @@ class Model(ShowBase):
         self.scene = self.loader.load_model(path_to_model)
         # Reparent the model to render.
         self.scene.reparentTo(self.render)
-
+        self.light_model = self.loader.load_model('models/misc/sphere')
+        self.light_model.setScale(10,10,10)
+        self.light_model.reparentTo(self.render)
         # Apply texture
         self.applyTexture(path_to_img, screenshotName)
-        return self
+        
+    def move_light(self,task):
+        dt = globalClock.getDt()
+        self.plnp.setPos(cos(self.lightX)*100,sin(self.lightX)*100, 100)
+        self.lightX += 2*dt
+        self.light_model.setPos(self.plnp.getPos())
+        return task.cont
 
     def setScreenshotName(self, fileName):
         if fileName != "":
@@ -41,13 +51,13 @@ class Model(ShowBase):
 
     # different lightings
 
-    def addPointLight(self, color=(0.2, 0.2, 0.2, 1), pos=(0, 0, 100)):
-        
+    def addPointLight(self, color=(1, 1, 1, 1), pos=(0, 0, 100)):
         plight = PointLight('plight')
         plight.setColor(color)
-        plnp = self.render.attachNewNode(plight)
-        plnp.setPos(pos)
-        self.render.setLight(plnp)
+        self.plnp = self.render.attachNewNode(plight)
+        self.plnp.setPos(pos)
+        self.render.setLight(self.plnp)
+        
 
     def addDirectionalLight(self, color=(0.2, 0.2, 0.2, 1), pos=(0, 0, 100), hpr=(0, 0, 0)):
         dlight = DirectionalLight('my dlight')
@@ -80,6 +90,7 @@ class Model(ShowBase):
     # applying textures
     def applyTexture(self, path_to_img, screenshotName=""):
         self.wid, self.hei = imagesize.get(path_to_img)
+        print(self.wid,self.hei)
         myTexture = self.loader.loadTexture(path_to_img)
         self.scene.setTexture(myTexture, 1)
 
@@ -88,4 +99,4 @@ class Model(ShowBase):
         self.scene.setPos(0, 0, 0)
 
         self.setScreenshotName(screenshotName)
-        self.taskMgr.add(self.cameraTaskInit, "cameraTaskInit")
+        #self.taskMgr.add(self.cameraTaskInit, "cameraTaskInit")
