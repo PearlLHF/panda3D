@@ -14,7 +14,7 @@ class Model(ShowBase):
     screenshotName = ""
 
     def __init__(self, modelName="Paper.egg", textureName="0.jpg", screenshotName=""):
-        ShowBase.__init__(self)
+        ShowBase.__init__(self, windowType='offscreen')
         self.loadModel(modelName, textureName, screenshotName)
         self.addPointLight()
 
