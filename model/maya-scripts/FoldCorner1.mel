@@ -1,0 +1,22 @@
+select -all;
+doDelete;
+
+polyPlane -sx 10 -sy 15 -w 15 -h 20 -n myPlane;
+
+float $piv1[3] = `pointPosition myPlane.vtx[24]`;
+select -r myPlane ;
+move 0 0 0;
+rotate -a -p $piv1[0] $piv1[1] $piv1[2] -ws -fo 0 -45 0 ;
+
+polyCut -cd "X" -ch 1 myPlane.f[0:1] myPlane.f[10:11];
+select -r myPlane.f[0:1] myPlane.f[10] ;
+
+$piv2 = `pointPosition myPlane.vtx[12]`;
+rotate -a -p $piv2[0] $piv2[1] $piv2[2] -ws -fo 0 0 -43;
+clear $piv2;
+
+select -r myPlane ;
+rotate -a -p $piv1[0] $piv1[1] $piv1[2] -ws -fo 0 0 0 ;
+clear $piv1;
+
+defaultPointLight(1, 1,1,1, 0, 0, 0,0,0, 1);

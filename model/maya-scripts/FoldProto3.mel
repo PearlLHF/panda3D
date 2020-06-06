@@ -1,0 +1,81 @@
+//create Input Window
+if(`window -exists expWindow`){
+    deleteUI expWindow;
+}
+
+window -rtf true -title "Make Fold Window" expWindow;
+
+columnLayout;
+global string $fName;
+
+intFieldGrp -label "Degree of fold (degrees)" degree;
+intFieldGrp -label "Horizontal/Vertical(0/1)" horver;
+intFieldGrp -label "SubDivision (1-10 / 1-15)  " subDiv;
+
+$fName = `textFieldGrp -label "File Name"`;
+
+button -c Fold -label "Make Fold";
+showWindow expWindow;
+
+global proc Fold (){
+    
+    global string $fName;
+    string $text = `textFieldGrp -q -text $fName`;
+    select -all;
+    doDelete; //clear all items from workspace
+
+    polyPlane -sx 10 -sy 15 -w 15 -h 20 -n myPlane -cuv 2; //create plane with 10 x divisions, 15 y divisions
+    
+    int $eFrame = `intFieldGrp -query -value1 subDiv`;
+    int $degree = `intFieldGrp -query -value1 degree`;
+    int $horver = `intFieldGrp -query -value1 horver`;
+    
+    print("subdivs="+ $eFrame + " degree of folding "+ $degree+" and file name is " + $text + " horizontal result ");
+    if($horver)
+        {
+         select -clear;
+         for($i = 0; $i<=15 ; ++$i)
+             {
+             select -add myPlane.f[($i-1)*10:(($i-1)*10)+$eFrame-1];
+             }
+         rotate -r -p 0cm 0cm 8.666667cm -os -fo 0 0 $degree ;
+        }
+    else
+        {
+        select -r myPlane.f[0:$eFrame];
+        rotate -r -p 0cm 0cm 8.666667cm -os -fo $degree 0 0 ;
+        }
+    // -33 stuff is the degree of folding, can also use manipPivot to change pivot of folding
+        shadingNode -asShader blinn;
+        sets -renderable true -noSurfaceShader true -empty -name blinn1SG;
+        connectAttr -f blinn1.outColor blinn1SG.surfaceShader;
+        assignCreatedShader "blinn" "" blinn1 "myPlane";
+        sets -e -forceElement blinn1SG;
+        defaultNavigation -createNew -destination "blinn1.color";
+        
+        createRenderNode -allWithTexturesUp "defaultNavigation -force true -connectToExisting -source %node -destination blinn1.color" "";
+        createRenderNode -allWithTexturesUp "defaultNavigation -force true -connectToExisting -source %node -destination blinn1.color" "";
+        shadingNode -asTexture -isColorManaged file;
+        shadingNode -asUtility place2dTexture;
+        connectAttr -f place2dTexture1.coverage file1.coverage;
+        connectAttr -f place2dTexture1.translateFrame file1.translateFrame;
+        connectAttr -f place2dTexture1.rotateFrame file1.rotateFrame;
+        connectAttr -f place2dTexture1.mirrorU file1.mirrorU;
+        connectAttr -f place2dTexture1.mirrorV file1.mirrorV;
+        connectAttr -f place2dTexture1.stagger file1.stagger;
+        connectAttr -f place2dTexture1.wrapU file1.wrapU;
+        connectAttr -f place2dTexture1.wrapV file1.wrapV;
+        connectAttr -f place2dTexture1.repeatUV file1.repeatUV;
+        connectAttr -f place2dTexture1.offset file1.offset;
+        connectAttr -f place2dTexture1.rotateUV file1.rotateUV;
+        connectAttr -f place2dTexture1.noiseUV file1.noiseUV;
+        connectAttr -f place2dTexture1.vertexUvOne file1.vertexUvOne;
+        connectAttr -f place2dTexture1.vertexUvTwo file1.vertexUvTwo;
+        connectAttr -f place2dTexture1.vertexUvThree file1.vertexUvThree;
+        connectAttr -f place2dTexture1.vertexCameraOne file1.vertexCameraOne;
+        connectAttr place2dTexture1.outUV file1.uv;
+        connectAttr place2dTexture1.outUvFilterSize file1.uvFilterSize;
+        connectAttr -force file1.outColor blinn1.color;
+        setAttr -type "string" file1.fileTextureName 'C:\Users\Pearl\Desktop\000\1.jfif';
+    }
+    

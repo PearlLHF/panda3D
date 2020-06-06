@@ -1,0 +1,35 @@
+
+
+//create Input Window
+if(`window -exists expWindow`){
+    deleteUI expWindow;
+}
+
+window -rtf true -title "Make Fold Window" expWindow;
+
+columnLayout;
+
+intFieldGrp -label "SubDivision (9,19,...,149)" subDiv;
+
+global string $fName;
+$fName = `textFieldGrp -label "File Name"`;
+
+button -c Fold -label "Make Fold";
+showWindow expWindow;
+
+global proc Fold (){
+    
+    global string $fName;
+    string $text = `textFieldGrp -q -text $fName`;
+    select -all;
+    doDelete; //clear all items from workspace
+
+    polyPlane -sx 10 -sy 15 -w 15 -h 20 -n myPlane; //create plane with 10 x divisions, 15 y divisions
+    
+    int $eFrame = `intFieldGrp -query -value1 subDiv`;
+    print("subdivs="+ $eFrame + " and file name is " + $text + "");
+    select -r myPlane.f[0:$eFrame];
+    rotate -r -p 0cm 0cm 8.666667cm -os -fo -33.987404 0 0 ;
+    // -33 stuff is the degree of folding, can also use manipPivot to change pivot of folding
+}
+    
